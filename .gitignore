@@ -1,0 +1,4 @@
+.env
+/.cache_ggshield
+/node_modules
+/var

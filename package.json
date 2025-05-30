@@ -1,0 +1,15 @@
+{
+  "scripts": {
+    "start": "node src/http/index.js"
+  },
+  "dependencies": {
+    "@dotenvx/dotenvx": "^1.44.1",
+    "@vbarbarosh/express-helpers": "^2.2.1",
+    "@vbarbarosh/node-helpers": "^3.65.0",
+    "axios": "^1.9.0",
+    "bluebird": "^3.7.2",
+    "body-parser": "^2.2.0",
+    "express": "^4.21.2",
+    "sharp": "^0.34.2"
+  }
+}
