@@ -24,6 +24,39 @@
                 <fancybox v-bind:value="fetch.response?.message.map(url => ({thumbnail_url: thumbnailer(url, {w: 200}), download_url: url}))"></fancybox>
             </vb-data-fetch>
         </vb-tabs-item>
+        <vb-tabs-item label="Prompts Editor">
+            <vb-data-vars v-slot="vars" :vars="{
+                current: null,
+                samples: [
+                    // https://www.photoroom.com/blog/create-ai-prompts
+                    {prompt: 'A minimalist, elegant background with a soft, neutral color palette and subtle shadows, conveying a sense of sophistication and high quality.'},
+                    {prompt: 'An outdoor setting with a vibrant, natural landscape, featuring lush greenery and a clear blue sky, ideal for products related to outdoor activities or eco-friendliness.'},
+                    {prompt: 'A modern, urban environment with sleek architectural elements and a monochrome color scheme, perfect for tech or lifestyle products.'},
+                    {prompt: 'A rustic, vintage background with warm, earthy tones and textures like aged wood and weathered stone, suitable for artisanal or heritage products.'},
+                    {prompt: 'A bright, playful setting filled with pastel colors and whimsical elements like balloons or confetti, great for products targeted at children or for fun, lifestyle goods.'},
+                    {prompt: 'An artistic, abstract background with bold colors and dynamic patterns, creating a vibrant and eye-catching setting for creative or design-oriented products.'},
+                    {prompt: 'A serene, spa-like setting with elements of tranquility like smooth stones, bamboo, and a calming water feature, ideal for wellness or beauty products.'},
+                    {prompt: 'A luxurious, opulent background with rich textures and colors, gold or silver accents, and a sense of exclusivity, fitting for high-end luxury products.'},
+                    {prompt: 'A cozy, homely setting with a comfortable, inviting ambiance, featuring elements like soft lighting, plush textiles, and warm tones, suitable for home goods or comfort products.'},
+                    {prompt: 'A futuristic, sci-fi-inspired background with sleek, metallic surfaces and neon lights, offering a cutting-edge feel for innovative or tech-forward products.'},
+                ],
+            }" v-on:init="v => v.current = v.samples[0]">
+                <button-json :value="vars"></button-json>
+                <div class="hsplit">
+                    <div class="mg25">
+                        <form-textarea v-model="vars.current.prompt"></form-textarea>
+                        <button-green v-on:click="vars.samples.unshift(vars.current = {prompt: ''})">New</button-green>
+                    </div>
+                    <div class="max-w400">
+                        <ul>
+                            <li v-for="item in vars.samples" @click="vars.current = item" :class="{yellow: (vars.current === item)}" class="cur-pointer">
+                                {{ item.prompt }}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </vb-data-vars>
+        </vb-tabs-item>
         <vb-tabs-item label="Buttons">
             <div class="iflex-col gap5">
                 <button-blue>button-blue</button-blue>
@@ -31,6 +64,14 @@
                 <button-json :value="{foo: 1, bar: 2}"></button-json>
                 <button-red>button-red</button-red>
                 <button-transparent>button-transparent</button-transparent>
+            </div>
+        </vb-tabs-item>
+        <vb-tabs-item label="Modals">
+            <div class="iflex-col gap5">
+                <button-transparent v-on:click="win.setTimeout(win.modal_blocking().return, 1000)">modal-blocking</button-transparent>
+                <button-transparent v-on:click="win.modal_error({error: {message: 'ggg'}})">modal-error</button-transparent>
+                <button-transparent v-on:click="win.modal_hello()">modal-hello</button-transparent>
+                <button-transparent v-on:click="win.modal_json({foo: 1, bar: 2})">modal-json</button-transparent>
             </div>
         </vb-tabs-item>
         <vb-tabs-item label="AI Image">
@@ -59,7 +100,34 @@
                 </vb-table>
             </vb-data-fetch>
         </vb-tabs-item>
-        <vb-tabs-item label="Tab 2">
+        <vb-tabs-item label="Docker">
+            <vb-data-fetch v-slot="fetch" url="/api/v1/docker/containers.json" auto>
+                <vb-data-vars v-slot="vars" :vars="{selection: [], items: !fetch.response ? [] : fetch.response.map(function (v) { return {name: `${v.Labels['com.docker.compose.project']} • ${v.Labels['com.docker.compose.service']}`, status: '', network: '', item: v}; })}">
+                    <vb-data-filter v-slot="filter" :items="vars.items">
+                        <button-json :value="fetch.response"></button-json>
+                        <button v-on:click="fetch.refresh">refresh</button>
+                        <div class="hsplit">
+                            <div>
+                                <div class="flex-row gap5">
+                                    <input v-model="filter.pattern">
+                                    <button>down [{{ vars.selection.length }}]</button>
+                                    <button>up -d [{{ vars.selection.length }}]</button>
+                                </div>
+                                <vb-table :selection="vars.selection" :items="filter.computed_items" :columns="[
+                                    {label: 'name'},
+                                    {label: 'status', read: v => v.item, component: 'docker-container-status'},
+                                    {label: 'network', read: v => v.item, component: 'docker-container-network'},
+                                ]"></vb-table>
+                            </div>
+                            <div>
+                                <pre>{{ vars.selection }}</pre>
+                            </div>
+                        </div>
+                    </vb-data-filter>
+                </vb-data-vars>
+            </vb-data-fetch>
+        </vb-tabs-item>
+        <vb-tabs-item label="Lipsum">
             <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Assumenda fuga harum id neque non perspiciatis ratione temporibus. Amet et ex exercitationem labore, optio pariatur velit! Deserunt illum laboriosam officiis praesentium.</p>
             <p>Maecenas ut enim est. Vestibulum id quam vel lectus vulputate bibendum a in ex. Aenean molestie, turpis id ultrices tincidunt, augue risus gravida metus, ut iaculis tellus quam placerat lacus. Nam porta libero elit, sit amet sagittis arcu placerat sollicitudin. Nulla mauris massa, posuere sit amet tincidunt id, pellentesque quis velit. Cras consectetur turpis vel imperdiet fringilla. Etiam sit amet metus mollis, condimentum lacus nec, condimentum eros. Praesent at tempor libero.</p>
             <p>Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Fusce ultricies mi sit amet nisl egestas, ac iaculis metus interdum. Curabitur pretium nibh sit amet metus aliquet dignissim. Sed laoreet metus vel augue placerat tristique. Duis in sem at mi ornare cursus. Proin blandit facilisis magna ut maximus. Pellentesque et leo ipsum. Vivamus et purus vitae lorem tempus luctus. Praesent finibus lacinia sem, quis blandit ipsum egestas eleifend. Pellentesque tincidunt magna diam. Vestibulum ante enim, tristique id faucibus eu, fermentum in sem. Quisque elementum erat vitae venenatis placerat. Nulla eget arcu fermentum, condimentum turpis quis, pulvinar lacus. Nulla quis consectetur eros.</p>
@@ -106,6 +174,8 @@
 <script src="../lib/components/modals/modal-error.js"></script>
 <script src="../lib/components/modals/modal-hello.js"></script>
 <script src="../lib/components/modals/modal-json.js"></script>
+<script src="../lib/components/services/docker/docker-container-network.js"></script>
+<script src="../lib/components/services/docker/docker-container-status.js"></script>
 <script src="../lib/components/svg/svg-icon-ai.js"></script>
 <script src="../lib/components/svg/svg-icon-check.js"></script>
 <script src="../lib/components/svg/svg-icon-copy.js"></script>
