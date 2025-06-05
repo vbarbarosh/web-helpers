@@ -22,8 +22,9 @@ async function main()
     express_routes(app, [
         {req: 'GET /', fn: echo},
         ...require('./services/black_forest_labs').routes,
-        ...require('./services/thumbnailer').routes,
         ...require('./services/docker').routes,
+        ...require('./services/mongo').routes,
+        ...require('./services/thumbnailer').routes,
         {req: 'ALL *', fn: page404},
     ]);
 
