@@ -13,13 +13,13 @@
 <div id="app">
     <vb-data-vars v-slot="vars" :vars="{selection: []}">
         <vb-data-fetch v-slot="fetch" :fn="win.snippets_list" auto>
-            <button-json :value="fetch.response"></button-json>
             <button-refresh @click="fetch.refresh"></button-refresh>
+            <button-json :value="fetch.response"></button-json>
             <vb-data-filter v-slot="filter" :items="fetch.response ?? []" prop="file">
                 <div class="flex-row gap15">
                     <div>
                         <input v-model="filter.pattern">
-                        <vb-table :items="filter.computed_items" :columns="[{label: 'file'}]" :selection="vars.selection"></vb-table>
+                        <vb-table :items="filter.computed_items" :columns="[{label: 'file'},{component: 'button-json'}]" :selection="vars.selection"></vb-table>
                     </div>
                     <div class="flex-fluid">
                         <div v-for="item in vars.selection">

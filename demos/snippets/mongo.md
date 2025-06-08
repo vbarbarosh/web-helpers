@@ -10,10 +10,10 @@
                     {label: 'name'},
                     {label: 'collections', read: v => v.stats.collections},
                     {label: 'objects', read: v => v.stats.objects},
-                    {label: '', slot: 'buttons'},
+                    {label: '', slot: 'open'},
+                    {component: 'button-json'},
                 ]">
-                    <template v-slot:buttons="slot">
-                        <button-json :value="slot.item"></button-json>
+                    <template v-slot:open="slot">
                         <button v-on:click="() => {vars.db = slot.item.name; fetch_col.refresh()}">open</button>
                     </template>
                 </vb-table>

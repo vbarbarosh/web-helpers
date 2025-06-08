@@ -4,9 +4,9 @@
 <vb-data-fetch v-slot="fetch" :fn="win.docker_containers_list" auto>
     <vb-data-vars v-slot="vars" :vars="{selection: [], items: !fetch.response ? [] : fetch.response.map(function (v) { return {name: `${v.Labels['com.docker.compose.project']} • ${v.Labels['com.docker.compose.service']}`, status: '', network: '', item: v}; })}">
         <vb-data-filter v-slot="filter" :items="vars.items">
+            <button-refresh @click="fetch.refresh">refresh</button-refresh>
             <button-json :value="fetch.response"></button-json>
             <button-json :value="vars.selection"></button-json>
-            <button v-on:click="fetch.refresh">refresh</button>
             <div class="flex-row gap10">
                 <div>
                     <div class="flex-row gap5">
@@ -20,13 +20,14 @@
                             {label: 'name'},
                             {label: 'status', read: v => v.item, component: 'docker-container-status'},
                             {label: 'network', read: v => v.item, component: 'docker-container-network'},
+                            {component: 'button-json'},
                         ]"></vb-table>
                 </div>
                 <div class="mg15">
                     <vb-data-fetch v-slot="fetch" :fn="win.docker_info" auto>
                         <div class="flex-row gap10">
+                            <button-refresh @click="fetch.refresh"></button-refresh>
                             <button-json :value="fetch.response"></button-json>
-                            <button v-on:click="fetch.refresh">refresh</button>
                             <spinner v-if="fetch.loading"></spinner>
                         </div>
                         <table v-if="fetch.response">
