@@ -24,6 +24,7 @@ async function main()
         ...require('./services/black_forest_labs').routes,
         ...require('./services/docker').routes,
         ...require('./services/mongo').routes,
+        ...require('./services/snippets').routes,
         ...require('./services/thumbnailer').routes,
         {req: 'ALL *', fn: page404},
     ]);
