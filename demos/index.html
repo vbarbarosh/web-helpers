@@ -11,29 +11,26 @@
 <body>
 
 <div id="app">
-
-    <div>
-        <vb-data-vars v-slot="vars" :vars="{selection: []}">
-            <vb-data-fetch v-slot="fetch" :fn="win.snippets_list" auto>
-                <button-json :value="fetch.response"></button-json>
-                <button-refresh @click="fetch.refresh"></button-refresh>
-                <vb-data-filter v-slot="filter" :items="fetch.response ?? []" prop="file">
-                    <div class="flex-row gap15">
-                        <div>
-                            <input v-model="filter.pattern">
-                            <vb-table :items="filter.computed_items" :columns="[{label: 'file'}]" :selection="vars.selection"></vb-table>
-                        </div>
-                        <div class="flex-fluid">
-                            <div v-for="item in vars.selection">
-                                <h2>{{ item.title }}</h2>
-                                <markdown :value="item.body"></markdown>
-                            </div>
+    <vb-data-vars v-slot="vars" :vars="{selection: []}">
+        <vb-data-fetch v-slot="fetch" :fn="win.snippets_list" auto>
+            <button-json :value="fetch.response"></button-json>
+            <button-refresh @click="fetch.refresh"></button-refresh>
+            <vb-data-filter v-slot="filter" :items="fetch.response ?? []" prop="file">
+                <div class="flex-row gap15">
+                    <div>
+                        <input v-model="filter.pattern">
+                        <vb-table :items="filter.computed_items" :columns="[{label: 'file'}]" :selection="vars.selection"></vb-table>
+                    </div>
+                    <div class="flex-fluid">
+                        <div v-for="item in vars.selection">
+                            <h2>{{ item.title }}</h2>
+                            <markdown :value="item.body"></markdown>
                         </div>
                     </div>
-                </vb-data-filter>
-            </vb-data-fetch>
-        </vb-data-vars>
-    </div>
+                </div>
+            </vb-data-filter>
+        </vb-data-fetch>
+    </vb-data-vars>
 </div>
 
 <script src="https://unpkg.com/axios@1.9.0/dist/axios.min.js"></script>
@@ -68,7 +65,11 @@
 <script src="../lib/components/data/vb-data-filter.js"></script>
 <script src="../lib/components/data/vb-data-vars.js"></script>
 <script src="../lib/components/data/vb-data-xx-empty.js"></script>
+<script src="../lib/components/forms/form-enum.js"></script>
+<script src="../lib/components/forms/form-int.js"></script>
+<script src="../lib/components/forms/form-string.js"></script>
 <script src="../lib/components/forms/form-textarea.js"></script>
+<script src="../lib/components/forms/form.js"></script>
 <script src="../lib/components/helpers/copy-to-clipboard.js"></script>
 <script src="../lib/components/helpers/copy-to-clipboard2.js"></script>
 <script src="../lib/components/helpers/highlight.js"></script>
