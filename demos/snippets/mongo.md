@@ -1,0 +1,28 @@
+# Mongo
+
+```vue
+<vb-data-vars v-slot="vars" :vars="{db: null}">
+    <vb-data-fetch v-slot="fetch_db" :fn="() => win.mongo_databases('local')" auto>
+        <vb-data-fetch v-slot="fetch_col" :fn="() => win.mongo_collections('local', vars.db)">
+            <button-json :value="fetch_db.response"></button-json>
+            <template v-if="fetch_db.response">
+                <vb-table :items="fetch_db.response.items" :columns="[
+                    {label: 'name'},
+                    {label: 'collections', read: v => v.stats.collections},
+                    {label: 'objects', read: v => v.stats.objects},
+                    {label: '', slot: 'buttons'},
+                ]">
+                    <template v-slot:buttons="slot">
+                        <button-json :value="slot.item"></button-json>
+                        <button v-on:click="() => {vars.db = slot.item.name; fetch_col.refresh()}">open</button>
+                    </template>
+                </vb-table>
+            </template>
+            <template v-if="fetch_col.response">
+                <button-json :value="fetch_col.response"></button-json>
+                <vb-table :items="fetch_col.response.items"></vb-table>
+            </template>
+        </vb-data-fetch>
+    </vb-data-fetch>
+</vb-data-vars>
+```

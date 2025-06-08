@@ -11,18 +11,55 @@
 <body>
 
 <div id="app">
-    <vb-tabs>
-        <vb-tabs-item label="Fancybox">
-            <vb-data-fetch v-slot="fetch" url="https://dog.ceo/api/breed/labrador/images/random/15" auto>
-                <div class="flex-row flex-align-center gap10 mb15">
-                    <button-transparent v-on:click="fetch.refresh" :disabled="fetch.loading">
-                        Refresh
-                    </button-transparent>
-                    <button-json :value="fetch.response"></button-json>
-                    <spinner v-if="fetch.loading"></spinner>
-                </div>
-                <fancybox v-bind:value="fetch.response?.message.map(url => ({thumbnail_url: thumbnailer(url, {w: 200}), download_url: url}))"></fancybox>
+
+    <div>
+        <vb-data-vars v-slot="vars" :vars="{selection: []}">
+            <vb-data-fetch v-slot="fetch" :fn="win.snippets_list" auto>
+                <button-json :value="fetch.response"></button-json>
+                <button-refresh @click="fetch.refresh"></button-refresh>
+                <vb-data-filter v-slot="filter" :items="fetch.response ?? []" prop="file">
+                    <div class="flex-row gap15">
+                        <div>
+                            <input v-model="filter.pattern">
+                            <vb-table :items="filter.computed_items" :columns="[{label: 'file'}]" :selection="vars.selection"></vb-table>
+                        </div>
+                        <div class="flex-fluid">
+                            <div v-for="item in vars.selection">
+                                <h2>{{ item.title }}</h2>
+                                <markdown :value="item.body"></markdown>
+                            </div>
+                        </div>
+                    </div>
+                </vb-data-filter>
             </vb-data-fetch>
+        </vb-data-vars>
+    </div>
+
+    <vb-tabs>
+        <vb-tabs-item label="Snippets Editor">
+            <vb-data-vars v-slot="vars" :vars="{
+                current: null,
+                snippets: [
+                    {name: 'spinner', body: '<spinner></spinner>\n'},
+                ],
+            }" v-on:init="v => v.current = v.snippets[0]">
+                <button-json :value="vars"></button-json>
+                <div class="hsplit">
+                    <div class="mg25">
+                        <input v-model="vars.current.name" type="text">
+                        <form-textarea v-model="vars.current.body"></form-textarea>
+                        <button-green v-on:click="vars.snippets.unshift(vars.current = {name: '', body: ''})">New</button-green>
+                    </div>
+                    <div class="max-w400">
+                        <ul>
+                            <li v-for="item in vars.snippets" @click="vars.current = item" :class="{yellow: (vars.current === item)}" class="cur-pointer">
+                                {{ item.name }}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <live-vue :value="vars.current.body"></live-vue>
+            </vb-data-vars>
         </vb-tabs-item>
         <vb-tabs-item label="Prompts Editor">
             <vb-data-vars v-slot="vars" :vars="{
@@ -57,127 +94,8 @@
                 </div>
             </vb-data-vars>
         </vb-tabs-item>
-        <vb-tabs-item label="Buttons">
-            <div class="iflex-col gap5">
-                <button-blue>button-blue</button-blue>
-                <button-green>button-green</button-green>
-                <button-json :value="{foo: 1, bar: 2}"></button-json>
-                <button-red>button-red</button-red>
-                <button-transparent>button-transparent</button-transparent>
-            </div>
-        </vb-tabs-item>
-        <vb-tabs-item label="Modals">
-            <div class="iflex-col gap5">
-                <button-transparent v-on:click="win.setTimeout(win.modal_blocking().return, 1000)">modal-blocking</button-transparent>
-                <button-transparent v-on:click="win.modal_error({error: {message: 'ggg'}})">modal-error</button-transparent>
-                <button-transparent v-on:click="win.modal_hello()">modal-hello</button-transparent>
-                <button-transparent v-on:click="win.modal_json({foo: 1, bar: 2})">modal-json</button-transparent>
-            </div>
-        </vb-tabs-item>
         <vb-tabs-item label="AI Image">
             <ai-background></ai-background>
-        </vb-tabs-item>
-        <vb-tabs-item label="Tables">
-            <vb-data-fetch v-slot="fetch" url="https://randomuser.me/api/?results=10" auto>
-                <div class="flex-row flex-align-center gap10 mb15">
-                    <button-transparent v-on:click="fetch.refresh" :disabled="fetch.loading">
-                        Refresh
-                    </button-transparent>
-                    <button-json :value="fetch.response"></button-json>
-                    <spinner v-if="fetch.loading"></spinner>
-                </div>
-                <vb-table :items="fetch.response?.results" :columns="[
-                    {label: 'picture', slot: 'picture'},
-                    {label: 'id', read: v => v.id.value},
-                    {label: 'gender', read: v => v.gender},
-                    {label: 'nat', read: v => v.nat},
-                    {label: 'name', read: v => `${v.name.title} ${v.name.first} ${v.name.last}`},
-                    {label: 'email', read: v => v.email},
-                ]">
-                    <template v-slot:picture="{item}">
-                        <img :src="thumbnailer(item.picture.large, {w: 50})" alt="">
-                    </template>
-                </vb-table>
-            </vb-data-fetch>
-        </vb-tabs-item>
-        <vb-tabs-item label="Docker Images">
-            <vb-data-fetch v-slot="fetch" :fn="win.docker_images_list" auto>
-                <vb-data-vars v-slot="vars" :vars="{selection: [], items: !fetch.response ? [] : fetch.response.map(function (v) { return {name: `${v.RepoTags[0] ?? v.RepoDigests[0]}`, containers: v.Containers, size: v.Size, item: v}; })}">
-                    <vb-data-filter v-slot="filter" :items="vars.items">
-                        <button-json :value="{selection: vars.selection, response: fetch.response}"></button-json>
-                        <button v-on:click="fetch.refresh">refresh</button>
-                        <div class="flex-row gap10">
-                            <div>
-                                <div class="flex-row gap5">
-                                    <input v-model="filter.pattern">
-                                </div>
-                                <vb-table :selection="vars.selection" :items="filter.computed_items" :columns="[
-                                    {label: 'name'},
-                                    {label: 'containers'},
-                                    {label: 'size', read: v => format_bytes(v.size)},
-                                    {label: 'json', component: 'button-json'},
-                                ]"></vb-table>
-                            </div>
-                            <div>
-                            </div>
-                        </div>
-                    </vb-data-filter>
-                </vb-data-vars>
-            </vb-data-fetch>
-        </vb-tabs-item>
-        <vb-tabs-item label="Docker Containers">
-            <vb-data-fetch v-slot="fetch" :fn="win.docker_containers_list" auto>
-                <vb-data-vars v-slot="vars" :vars="{selection: [], items: !fetch.response ? [] : fetch.response.map(function (v) { return {name: `${v.Labels['com.docker.compose.project']} • ${v.Labels['com.docker.compose.service']}`, status: '', network: '', item: v}; })}">
-                    <vb-data-filter v-slot="filter" :items="vars.items">
-                        <button-json :value="fetch.response"></button-json>
-                        <button-json :value="vars.selection"></button-json>
-                        <button v-on:click="fetch.refresh">refresh</button>
-                        <div class="flex-row gap10">
-                            <div>
-                                <div class="flex-row gap5">
-                                    <input v-model="filter.pattern">
-                                    <button v-on:click="win.blocking(win.Promise.all(vars.selection.map(v => win.docker_containers_restart(v.item.Id))).then(fetch.refresh))">restart [{{ vars.selection.length }}]</button>
-                                    <button v-on:click="win.blocking(win.Promise.all(vars.selection.map(v => win.docker_containers_pause(v.item.Id))).then(fetch.refresh))">pause [{{ vars.selection.length }}]</button>
-                                    <button v-on:click="win.blocking(win.Promise.all(vars.selection.map(v => win.docker_containers_unpause(v.item.Id))).then(fetch.refresh))">unpause [{{ vars.selection.length }}]</button>
-                                    <button v-on:click="win.blocking(win.Promise.all(vars.selection.map(v => win.docker_containers_remove(v.item.Id))).then(fetch.refresh))">delete [{{ vars.selection.length }}]</button>
-                                </div>
-                                <vb-table :selection="vars.selection" :items="filter.computed_items" :columns="[
-                                    {label: 'name'},
-                                    {label: 'status', read: v => v.item, component: 'docker-container-status'},
-                                    {label: 'network', read: v => v.item, component: 'docker-container-network'},
-                                ]"></vb-table>
-                            </div>
-                            <div class="mg15">
-                                <vb-data-fetch v-slot="fetch" :fn="win.docker_info" auto>
-                                    <div class="flex-row gap10">
-                                        <button-json :value="fetch.response"></button-json>
-                                        <button v-on:click="fetch.refresh">refresh</button>
-                                        <spinner v-if="fetch.loading"></spinner>
-                                    </div>
-                                    <table v-if="fetch.response">
-                                        <tbody>
-                                        <tr><th>Containers</th><td>{{ fetch.response.Containers }}</td></tr>
-                                        <tr><th>ContainersRunning</th><td>{{ fetch.response.ContainersRunning }}</td></tr>
-                                        <tr><th>ContainersPaused</th><td>{{ fetch.response.ContainersPaused }}</td></tr>
-                                        <tr><th>ContainersStopped</th><td>{{ fetch.response.ContainersStopped }}</td></tr>
-                                        <tr><th>Images</th><td>{{ fetch.response.Images }}</td></tr>
-                                        <tr><th>NCPU</th><td>{{ fetch.response.NCPU }}</td></tr>
-                                        <tr><th>MemTotal</th><td>{{ format_bytes(fetch.response.MemTotal) }}</td></tr>
-                                        <tr><th>DockerRootDir</th><td>{{ fetch.response.DockerRootDir }}</td></tr>
-                                        <tr><th>ServerVersion</th><td>{{ fetch.response.ServerVersion }}</td></tr>
-                                        </tbody>
-                                    </table>
-                                </vb-data-fetch>
-                            </div>
-                        </div>
-                    </vb-data-filter>
-                </vb-data-vars>
-            </vb-data-fetch>
-        </vb-tabs-item>
-        <vb-tabs-item label="Lipsum">
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Assumenda fuga harum id neque non perspiciatis ratione temporibus. Amet et ex exercitationem labore, optio pariatur velit! Deserunt illum laboriosam officiis praesentium.</p>
-            <p>Maecenas ut enim est. Vestibulum id quam vel lectus vulputate bibendum a in ex. Aenean molestie, turpis id ultrices tincidunt, augue risus gravida metus, ut iaculis tellus quam placerat lacus. Nam porta libero elit, sit amet sagittis arcu placerat sollicitudin. Nulla mauris massa, posuere sit amet tincidunt id, pellentesque quis velit. Cras consectetur turpis vel imperdiet fringilla. Etiam sit amet metus mollis, condimentum lacus nec, condimentum eros. Praesent at tempor libero.</p>
-            <p>Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Fusce ultricies mi sit amet nisl egestas, ac iaculis metus interdum. Curabitur pretium nibh sit amet metus aliquet dignissim. Sed laoreet metus vel augue placerat tristique. Duis in sem at mi ornare cursus. Proin blandit facilisis magna ut maximus. Pellentesque et leo ipsum. Vivamus et purus vitae lorem tempus luctus. Praesent finibus lacinia sem, quis blandit ipsum egestas eleifend. Pellentesque tincidunt magna diam. Vestibulum ante enim, tristique id faucibus eu, fermentum in sem. Quisque elementum erat vitae venenatis placerat. Nulla eget arcu fermentum, condimentum turpis quis, pulvinar lacus. Nulla quis consectetur eros.</p>
         </vb-tabs-item>
     </vb-tabs>
 </div>
@@ -197,13 +115,18 @@
 </script>
 
 <script src="../lib/js/services/docker.js"></script>
+<script src="../lib/js/services/mongo.js"></script>
+<script src="../lib/js/services/snippets.js"></script>
 <script src="../lib/js/utils.js"></script>
 
 <script src="../lib/components/ai/ai-background.js"></script>
+<script src="../lib/components/breadcrumbs/vb-breadcrumbs-item.js"></script>
+<script src="../lib/components/breadcrumbs/vb-breadcrumbs.js"></script>
 <script src="../lib/components/buttons/button-blue.js"></script>
 <script src="../lib/components/buttons/button-green.js"></script>
 <script src="../lib/components/buttons/button-json.js"></script>
 <script src="../lib/components/buttons/button-red.js"></script>
+<script src="../lib/components/buttons/button-refresh.js"></script>
 <script src="../lib/components/buttons/button-transparent.js"></script>
 <script src="../lib/components/data/vb-data-fetch.js"></script>
 <script src="../lib/components/data/vb-data-filter.js"></script>
@@ -222,6 +145,7 @@
 <script src="../lib/components/modals/modal-error.js"></script>
 <script src="../lib/components/modals/modal-hello.js"></script>
 <script src="../lib/components/modals/modal-json.js"></script>
+<script src="../lib/components/proto/proto.js"></script>
 <script src="../lib/components/services/docker/docker-container-network.js"></script>
 <script src="../lib/components/services/docker/docker-container-status.js"></script>
 <script src="../lib/components/svg/svg-icon-ai.js"></script>
@@ -258,6 +182,7 @@
 <script src="../lib/components/tabs/vb-tabs-item.js"></script>
 <script src="../lib/components/tabs/vb-tabs.js"></script>
 <script src="../lib/components/vendor/fancybox.js"></script>
+<script src="../lib/components/vendor/markdown.js"></script>
 <script src="../lib/components/vendor/prism-html.js"></script>
 <script src="../lib/components/vendor/prism-js.js"></script>
 
