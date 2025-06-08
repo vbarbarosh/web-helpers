@@ -1,15 +1,20 @@
 const Perf = require('../helpers/Perf');
 const Promise = require('bluebird');
 const make_int = require('@vbarbarosh/type-helpers/src/make_int');
-const {MongoClient} = require('mongodb');
+const {MongoClient, ObjectId} = require('mongodb');
 
 const routes = [
     {req: 'GET /api/v1/mongo/connections.json', fn: route_mongo_connections},
     {req: 'GET /api/v1/mongo/:conn/databases.json', fn: route_mongo_databases},
+
     {req: 'GET /api/v1/mongo/:conn/:db/collections.json', fn: route_mongo_collections},
-    {req: 'GET /api/v1/mongo/:conn/:db/:col/documents.json', fn: route_mongo_documents},
     {req: 'POST /api/v1/mongo/:conn/:db/:col/analyze', fn: route_mongo_analyze},
     {req: 'DELETE /api/v1/mongo/:conn/:db/:col', fn: route_mongo_drop_collection},
+
+    {req: 'GET /api/v1/mongo/:conn/:db/:col/documents.json', fn: route_mongo_documents_list},
+    {req: 'POST /api/v1/mongo/:conn/:db/:col/documents', fn: route_mongo_documents_create},
+    {req: 'PUT /api/v1/mongo/:conn/:db/:col/documents/:doc', fn: route_mongo_documents_replace},
+    {req: 'DELETE /api/v1/mongo/:conn/:db/:col/documents/:doc', fn: route_mongo_documents_remove},
 ];
 
 const mongo_connections = {
@@ -73,7 +78,7 @@ async function route_mongo_collections(req, res)
 }
 
 // GET /api/v1/mongo/:conn/:db/:col/documents.json
-async function route_mongo_documents(req, res)
+async function route_mongo_documents_list(req, res)
 {
     const client = mongo_connections[req.params.conn];
     if (!client) {
@@ -148,6 +153,81 @@ async function route_mongo_drop_collection(req, res)
     await client.db(req.params.db).collection(req.params.col).drop();
 
     res.send({perf});
+}
+
+// POST /api/v1/mongo/:conn/:db/:col/documents
+async function route_mongo_documents_create(req, res)
+{
+    const client = mongo_connections[req.params.conn];
+    if (!client) {
+        res.status(400).send(`Invalid connection name: ${req.params.conn}. Allowed options are: ${Object.keys(mongo_connections).join(', ')}.`);
+        return;
+    }
+
+    const {_id, ...rest} = req.body;
+
+    const perf = new Perf();
+    perf.checkpoint('Inserting document');
+
+    const col = client.db(req.params.db).collection(req.params.col);
+    const result = await col.insertOne(rest);
+
+    res.send({_id: result.insertedId, perf});
+}
+
+// PUT /api/v1/mongo/:conn/:db/:col/documents/:doc
+async function route_mongo_documents_replace(req, res)
+{
+    const client = mongo_connections[req.params.conn];
+    if (!client) {
+        res.status(400).send(`Invalid connection name: ${req.params.conn}. Allowed options are: ${Object.keys(mongo_connections).join(', ')}.`);
+        return;
+    }
+
+    const {_id, ...rest} = req.body;
+    if (req.params.doc !== _id) {
+        throw new Error("Cannot change the _id of an existing document.");
+    }
+
+    const perf = new Perf();
+    perf.checkpoint('Replacing document');
+
+    const col = client.db(req.params.db).collection(req.params.col);
+    const result = await col.replaceOne({_id: new ObjectId(_id)}, rest);
+
+    res.send({result, perf});
+}
+
+// DELETE /api/v1/mongo/:conn/:db/:col/documents/:doc
+async function route_mongo_documents_remove(req, res)
+{
+    const client = mongo_connections[req.params.conn];
+    if (!client) {
+        res.status(400).send(`Invalid connection name: ${req.params.conn}. Allowed options are: ${Object.keys(mongo_connections).join(', ')}.`);
+        return;
+    }
+
+    const col = client.db(req.params.db).collection(req.params.col);
+    const doc_id = req.params.doc;
+
+    const {ObjectId} = require('mongodb');
+    let _id;
+    try {
+        _id = new ObjectId(doc_id);
+    } catch (e) {
+        res.status(400).send(`Invalid document ID: ${doc_id}`);
+        return;
+    }
+
+    const perf = new Perf();
+    perf.checkpoint('Deleting document');
+
+    const result = await col.deleteOne({_id});
+
+    res.send({
+        deletedCount: result.deletedCount,
+        perf
+    });
 }
 
 async function mongo_analyze(col, limit = 50000)

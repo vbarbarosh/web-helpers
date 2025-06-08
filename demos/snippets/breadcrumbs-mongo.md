@@ -1,0 +1,45 @@
+# Breadcrumbs • Mongo
+
+```vue
+<vb-data-vars v-slot="vars" :vars="{conn: null, db: null, col: null, doc: null}">
+    <reset-on-change :vars="vars" chain="conn,db,col,doc">
+        <vb-breadcrumbs :vars>
+            <vb-breadcrumbs-item label="Connections">
+                <form-enum v-model="vars.conn" :options="[
+                    {label: 'local', value: 'local'},
+                    {label: 'remote1', value: 'remote1'},
+                    {label: 'remote2', value: 'remote2'},
+                    {label: 'null', value: null},
+                ]" label="Select MongoDB connection"></form-enum>
+                <pre>{{vars}}</pre>
+            </vb-breadcrumbs-item>
+            <vb-breadcrumbs-item v-if="vars.conn" label="Databases">
+                <form-enum v-model="vars.db" :options="[
+                    {label: 'db1', value: 'db1'},
+                    {label: 'db2', value: 'db2'},
+                    {label: 'db3', value: 'db3'}]" label="Select MongoDB database"></form-enum>
+                <pre>{{vars}}</pre>
+            </vb-breadcrumbs-item>
+            <vb-breadcrumbs-item v-if="vars.db" label="Collections">
+                <form-enum v-model="vars.col" :options="[
+                    {label: 'col1', value: 'col1'},
+                    {label: 'col2', value: 'col2'},
+                    {label: 'col3', value: 'col3'}]" label="Select MongoDB collection"></form-enum>
+                <pre>{{vars}}</pre>
+            </vb-breadcrumbs-item>
+            <vb-breadcrumbs-item v-if="vars.col" label="Documents">
+                <p>Select MongoDB document</p>
+                <form-enum v-model="vars.doc" :options="[
+                    {label: 'doc1', value: 'doc1'},
+                    {label: 'doc2', value: 'doc2'},
+                    {label: 'doc3', value: 'doc3'}]" label="Select MongoDB document"></form-enum>
+                <pre>{{vars}}</pre>
+            </vb-breadcrumbs-item>
+            <vb-breadcrumbs-item v-if="vars.doc" label="Document Details">
+                <p>Document details</p>
+                <pre>{{ vars }}</pre>
+            </vb-breadcrumbs-item>
+        </vb-breadcrumbs>
+    </reset-on-change>
+</vb-data-vars>
+```
