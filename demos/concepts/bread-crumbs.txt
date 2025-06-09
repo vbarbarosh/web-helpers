@@ -1,0 +1,2 @@
+- breadcrumbs - is a chain of dependable variables
+- every tab represents some value, if empty - no tab should be displayed; if value changed - tab should be refreshed
