@@ -7,7 +7,10 @@ const routes = [
     {req: 'GET /api/v1/mongo/connections.json', fn: route_mongo_connections},
     {req: 'GET /api/v1/mongo/:conn/databases.json', fn: route_mongo_databases},
 
-    {req: 'GET /api/v1/mongo/:conn/:db/collections.json', fn: route_mongo_collections},
+    {req: 'GET /api/v1/mongo/:conn/:db/collections.json', fn: route_mongo_collections_list},
+    {req: 'POST /api/v1/mongo/:conn/:db', fn: route_mongo_collections_create},
+    {req: 'DELETE /api/v1/mongo/:conn/:db/:col', fn: route_mongo_collections_remove},
+
     {req: 'POST /api/v1/mongo/:conn/:db/:col/analyze', fn: route_mongo_analyze},
     {req: 'DELETE /api/v1/mongo/:conn/:db/:col', fn: route_mongo_drop_collection},
 
@@ -53,7 +56,7 @@ async function route_mongo_databases(req, res)
 }
 
 // GET /api/v1/mongo/:conn/:db/collections.json
-async function route_mongo_collections(req, res)
+async function route_mongo_collections_list(req, res)
 {
     const client = mongo_connections[req.params.conn];
     if (!client) {
@@ -76,6 +79,39 @@ async function route_mongo_collections(req, res)
     });
 
     res.send({items, perf});
+}
+
+// POST /api/v1/mongo/:conn/:db
+async function route_mongo_collections_create(req, res)
+{
+    const client = mongo_connections[req.params.conn];
+    if (!client) {
+        res.status(400).send(`Invalid connection name: ${req.params.conn}. Allowed options are: ${Object.keys(mongo_connections).join(', ')}.`);
+        return;
+    }
+
+    const perf = new Perf();
+
+    perf.checkpoint('Creating collection');
+    const col = await client.db(req.params.db).createCollection(req.body.name, req.body.options);
+    const [stats] = await col.aggregate([{$collStats: {storageStats: {}}}]).toArray();
+    res.send({name: req.body.name, stats});
+}
+
+// DELETE /api/v1/mongo/:conn/:db/:col
+async function route_mongo_collections_remove(req, res)
+{
+    const client = mongo_connections[req.params.conn];
+    if (!client) {
+        res.status(400).send(`Invalid connection name: ${req.params.conn}. Allowed options are: ${Object.keys(mongo_connections).join(', ')}.`);
+        return;
+    }
+
+    const perf = new Perf();
+
+    perf.checkpoint('Dropping collection');
+    const out = await client.db(req.params.db).dropCollection(req.params.col);
+    res.send(out);
 }
 
 // GET /api/v1/mongo/:conn/:db/:col/documents.json

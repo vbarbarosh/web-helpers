@@ -304,6 +304,12 @@ pre {
     opacity: 0;
 }
 
+.flex-row-center-left {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+}
+
 .gap5 { gap: 5px; }
 .gap10 { gap: 10px; }
 .gap15 { gap: 15px; }
