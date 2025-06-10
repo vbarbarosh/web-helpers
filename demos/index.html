@@ -11,11 +11,11 @@
 <body>
 
 <div id="app">
-    <vb-data-vars v-slot="vars" :vars="{selection: []}">
-        <vb-data-fetch v-slot="fetch" :fn="win.snippets_list" auto>
+    <data-vars v-slot="vars" :vars="{selection: []}">
+        <data-fetch v-slot="fetch" :fn="win.snippets_list" auto>
             <button-refresh @click="fetch.refresh"></button-refresh>
             <button-json :value="fetch.response"></button-json>
-            <vb-data-filter v-slot="filter" :items="fetch.response ?? []" prop="file">
+            <data-filter v-slot="filter" :items="fetch.response ?? []" prop="file">
                 <div class="flex-row gap15">
                     <div>
                         <input v-model="filter.pattern">
@@ -28,9 +28,9 @@
                         </div>
                     </div>
                 </div>
-            </vb-data-filter>
-        </vb-data-fetch>
-    </vb-data-vars>
+            </data-filter>
+        </data-fetch>
+    </data-vars>
 </div>
 
 <script src="https://unpkg.com/axios@1.9.0/dist/axios.min.js"></script>
@@ -61,10 +61,10 @@
 <script src="../lib/components/buttons/button-red.js"></script>
 <script src="../lib/components/buttons/button-refresh.js"></script>
 <script src="../lib/components/buttons/button-transparent.js"></script>
-<script src="../lib/components/data/vb-data-fetch.js"></script>
-<script src="../lib/components/data/vb-data-filter.js"></script>
-<script src="../lib/components/data/vb-data-vars.js"></script>
-<script src="../lib/components/data/vb-data-xx-empty.js"></script>
+<script src="../lib/components/data/data-fetch.js"></script>
+<script src="../lib/components/data/data-filter.js"></script>
+<script src="../lib/components/data/data-vars.js"></script>
+<script src="../lib/components/data/data-xx-empty.js"></script>
 <script src="../lib/components/forms/form-enum.js"></script>
 <script src="../lib/components/forms/form-int.js"></script>
 <script src="../lib/components/forms/form-string.js"></script>

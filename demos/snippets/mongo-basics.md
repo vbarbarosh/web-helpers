@@ -1,7 +1,7 @@
 # Mongo • Basics
 
 ```vue
-<vb-data-fetch v-slot="fetch" :fn="() => win.mongo_documents_list('local', 'hello', 'docs')" auto>
+<data-fetch v-slot="fetch" :fn="() => win.mongo_documents_list('local', 'hello', 'docs')" auto>
     <div class="flex-row flex-align-center gap10">
         <button-blue @click="() => win.blocking(win.mongo_documents_create('local', 'hello', 'docs', {random: Math.random(), time: new Date()}).then(fetch.refresh))">Create Document</button-blue>
         <button-refresh @click="fetch.refresh"></button-refresh>
@@ -16,5 +16,5 @@
             </template>
         </vb-table>
     </template>
-</vb-data-fetch>
+</data-fetch>
 ```

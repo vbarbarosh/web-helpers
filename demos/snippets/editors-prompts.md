@@ -1,7 +1,7 @@
 # Prompts Editor
 
 ```vue
-<vb-data-vars v-slot="vars" :vars="{
+<data-vars v-slot="vars" :vars="{
         current: null,
         samples: [
             // https://www.photoroom.com/blog/create-ai-prompts
@@ -31,5 +31,5 @@
             </ul>
         </div>
     </div>
-</vb-data-vars>
+</data-vars>
 ```

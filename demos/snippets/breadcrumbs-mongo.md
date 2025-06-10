@@ -1,7 +1,7 @@
 # Breadcrumbs • Mongo
 
 ```vue
-<vb-data-vars v-slot="vars" :vars="{conn: null, db: null, col: null, doc: null}">
+<data-vars v-slot="vars" :vars="{conn: null, db: null, col: null, doc: null}">
     <reset-on-change :vars="vars" chain="conn,db,col,doc">
         <breadcrumbs :vars>
             <breadcrumbs-item value="root" label="Connections">
@@ -41,5 +41,5 @@
             </breadcrumbs-item>
         </breadcrumbs>
     </reset-on-change>
-</vb-data-vars>
+</data-vars>
 ```

@@ -1,7 +1,7 @@
 # Snippets Editor
 
 ```vue
-<vb-data-vars v-slot="vars" :vars="{
+<data-vars v-slot="vars" :vars="{
         current: null,
         snippets: [
             {name: 'spinner', body: '<spinner></spinner>\n'},
@@ -23,5 +23,5 @@
         </div>
     </div>
     <live-vue :value="vars.current.body"></live-vue>
-</vb-data-vars>
+</data-vars>
 ```

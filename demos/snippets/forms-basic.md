@@ -1,7 +1,7 @@
 # Forms • Basic
 
 ```vue
-<vb-data-vars v-slot="vars" :vars="{form: {}}">
+<data-vars v-slot="vars" :vars="{form: {}}">
     <div class="flex-row gap15">
         <div>
             <form-string v-model="vars.form.first_name" label="First Name"></form-string>
@@ -16,5 +16,5 @@
             <pre>{{ vars }}</pre>
         </div>
     </div>
-</vb-data-vars>
+</data-vars>
 ```

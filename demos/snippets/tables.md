@@ -1,7 +1,7 @@
 # Tables
 
 ```vue
-<vb-data-fetch v-slot="fetch" url="https://randomuser.me/api/?results=10" auto>
+<data-fetch v-slot="fetch" url="https://randomuser.me/api/?results=10" auto>
     <div class="flex-row flex-align-center gap10 mb15">
         <button-refresh v-on:click="fetch.refresh" :disabled="fetch.loading"></button-refresh>
         <button-json :value="fetch.response"></button-json>
@@ -20,5 +20,5 @@
             <img :src="thumbnailer(item.picture.large, {w: 50})" alt="">
         </template>
     </vb-table>
-</vb-data-fetch>
+</data-fetch>
 ```

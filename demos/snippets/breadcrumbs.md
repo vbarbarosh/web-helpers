@@ -1,7 +1,7 @@
 # Breadcrumbs
 
 ```vue
-<vb-data-vars v-slot="vars" :vars="{foo: null, bar: null, baz: null}">
+<data-vars v-slot="vars" :vars="{foo: null, bar: null, baz: null}">
     <reset-on-change :vars chain="foo,bar,baz"></reset-on-change>
     <breadcrumbs>
         <breadcrumbs-item value="root" label="Foo">
@@ -29,5 +29,5 @@
             </select>
         </breadcrumbs-item>
     </breadcrumbs>
-</vb-data-vars>
+</data-vars>
 ```
