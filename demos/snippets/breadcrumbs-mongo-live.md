@@ -41,7 +41,7 @@
             </breadcrumbs-item>
             <breadcrumbs-item :value="vars.doc" label="Document Details">
                 <p>Document details</p>
-                <vb-prism-js :value="win.JSON.stringify(vars, null, 4)"></vb-prism-js>
+                <prism-js :value="win.JSON.stringify(vars, null, 4)"></prism-js>
             </breadcrumbs-item>
         </breadcrumbs>
     </reset-on-change>
