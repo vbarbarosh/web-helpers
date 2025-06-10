@@ -1,7 +1,7 @@
 # Breadcrumbs • Mongo
 
 ```vue
-<data-vars v-slot="vars" :vars="{conn: null, db: null, col: null, doc: null}">
+<data-vars v-slot="vars" :vars="{conn: null, db: null, col: null, doc: null}" store="snip/mongo">
     <reset-on-change :vars="vars" chain="conn,db,col,doc" />
     <breadcrumbs :vars>
         <breadcrumbs-item value="root" label="Connections">
@@ -33,15 +33,19 @@
                 <button-json :value="fetch.response"></button-json>
                 <button-refresh @click="fetch.refresh"></button-refresh>
                 <vb-table v-if="fetch.response" :items="fetch.response.items">
-                    <template v-slot:actions="item">
-                        <button @click="vars.doc = item">open</button>
+                    <template v-slot:actions="{item}">
+                        <button @click="vars.doc = item._id">open</button>
                     </template>
                 </vb-table>
             </data-fetch>
         </breadcrumbs-item>
         <breadcrumbs-item :value="vars.doc" label="Document Details">
             <p>Document details</p>
-            <prism-js :value="win.JSON.stringify(vars, null, 4)"></prism-js>
+            <data-fetch v-slot="fetch" :fn="() => win.blocking(win.mongo_documents_fetch(vars.conn, vars.db, vars.col, vars.doc))" auto>
+                <button-json :value="fetch.response"></button-json>
+                <button-refresh @click="fetch.refresh"></button-refresh>
+                <prism-js :value="win.JSON.stringify(fetch.response, null, 4)" />
+            </data-fetch>
         </breadcrumbs-item>
     </breadcrumbs>
 </data-vars>

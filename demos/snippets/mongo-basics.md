@@ -11,7 +11,7 @@
     <template v-if="fetch.response?.items">
         <vb-table :items="fetch.response.items">
             <template v-slot:actions="{item}">
-                <button @click="() => win.blocking(win.mongo_documents_remove('local', 'hello', 'docs', item).then(fetch.refresh))">remove</button>
+                <button @click="() => win.blocking(win.mongo_documents_remove('local', 'hello', 'docs', item._id).then(fetch.refresh))">remove</button>
                 <button @click="() => win.blocking(win.mongo_documents_replace('local', 'hello', 'docs', {...item, random: Math.random(), time: new Date()}).then(fetch.refresh))">replace</button>
             </template>
         </vb-table>

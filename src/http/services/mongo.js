@@ -12,6 +12,7 @@ const routes = [
     {req: 'DELETE /api/v1/mongo/:conn/:db/:col', fn: route_mongo_drop_collection},
 
     {req: 'GET /api/v1/mongo/:conn/:db/:col/documents.json', fn: route_mongo_documents_list},
+    {req: 'GET /api/v1/mongo/:conn/:db/:col/documents/:doc.json', fn: route_mongo_documents_fetch},
     {req: 'POST /api/v1/mongo/:conn/:db/:col/documents', fn: route_mongo_documents_create},
     {req: 'PUT /api/v1/mongo/:conn/:db/:col/documents/:doc', fn: route_mongo_documents_replace},
     {req: 'DELETE /api/v1/mongo/:conn/:db/:col/documents/:doc', fn: route_mongo_documents_remove},
@@ -98,6 +99,29 @@ async function route_mongo_documents_list(req, res)
     ]);
 
     res.send({items, total, limit, offset, perf});
+}
+
+// GET /api/v1/mongo/:conn/:db/:col/documents/:doc.json
+async function route_mongo_documents_fetch(req, res)
+{
+    const client = mongo_connections[req.params.conn];
+    if (!client) {
+        res.status(400).send(`Invalid connection name: ${req.params.conn}. Allowed options are: ${Object.keys(mongo_connections).join(', ')}.`);
+        return;
+    }
+
+    const perf = new Perf();
+    const col = client.db(req.params.db).collection(req.params.col);
+
+    perf.checkpoint('Fetching document');
+    const [out] = await col.find({_id: new ObjectId(req.params.doc)}).limit(1).toArray();
+
+    if (!out) {
+        res.status(404).send('Not Found');
+    }
+    else {
+        res.send(out);
+    }
 }
 
 // POST /api/v1/mongo/:conn/:db/:col/analyze
