@@ -17,10 +17,10 @@
             {prompt: 'A futuristic, sci-fi-inspired background with sleek, metallic surfaces and neon lights, offering a cutting-edge feel for innovative or tech-forward products.'},
         ],
     }" v-on:init="v => v.current = v.samples[0]">
-    <button-json :value="vars"></button-json>
+    <button-json :value="vars" />
     <div class="hsplit">
         <div class="mg25">
-            <form-textarea v-model="vars.current.prompt"></form-textarea>
+            <form-textarea v-model="vars.current.prompt" />
             <button-green v-on:click="vars.samples.unshift(vars.current = {prompt: ''})">New</button-green>
         </div>
         <div class="max-w400">

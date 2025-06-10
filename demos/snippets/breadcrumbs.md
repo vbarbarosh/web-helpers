@@ -2,7 +2,7 @@
 
 ```vue
 <data-vars v-slot="vars" :vars="{foo: null, bar: null, baz: null}">
-    <reset-on-change :vars chain="foo,bar,baz"></reset-on-change>
+    <reset-on-change :vars chain="foo,bar,baz" />
     <breadcrumbs>
         <breadcrumbs-item value="root" label="Foo">
             <p>Ipsum minus nemo odit omnis praesentium tempora? Aliquid amet autem commodi id ipsum quaerat quasi, quos ratione repellat sit ullam voluptates voluptatibus.</p>

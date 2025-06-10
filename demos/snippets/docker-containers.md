@@ -4,9 +4,9 @@
 <data-fetch v-slot="fetch" :fn="win.docker_containers_list" auto>
     <data-vars v-slot="vars" :vars="{selection: [], items: !fetch.response ? [] : fetch.response.map(function (v) { return {name: `${v.Labels['com.docker.compose.project']} • ${v.Labels['com.docker.compose.service']}`, status: '', network: '', item: v}; })}">
         <data-filter v-slot="filter" :items="vars.items">
-            <button-refresh @click="fetch.refresh">refresh</button-refresh>
-            <button-json :value="fetch.response"></button-json>
-            <button-json :value="vars.selection"></button-json>
+            <button-refresh @click="fetch.refresh" />
+            <button-json :value="fetch.response" />
+            <button-json :value="vars.selection" />
             <div class="flex-row gap10">
                 <div>
                     <div class="flex-row gap5">
@@ -26,12 +26,12 @@
                 <div class="mg15">
                     <data-fetch v-slot="fetch" :fn="win.docker_info" auto>
                         <div class="flex-row gap10">
-                            <button-refresh @click="fetch.refresh"></button-refresh>
-                            <button-json :value="fetch.response"></button-json>
-                            <spinner v-if="fetch.loading"></spinner>
+                            <button-refresh @click="fetch.refresh" />
+                            <button-json :value="fetch.response" />
+                            <spinner v-if="fetch.loading" />
                         </div>
                         <table v-if="fetch.response">
-                            <tbody>
+                        <tbody>
                             <tr><th>Containers</th><td>{{ fetch.response.Containers }}</td></tr>
                             <tr><th>ContainersRunning</th><td>{{ fetch.response.ContainersRunning }}</td></tr>
                             <tr><th>ContainersPaused</th><td>{{ fetch.response.ContainersPaused }}</td></tr>
@@ -41,7 +41,7 @@
                             <tr><th>MemTotal</th><td>{{ format_bytes(fetch.response.MemTotal) }}</td></tr>
                             <tr><th>DockerRootDir</th><td>{{ fetch.response.DockerRootDir }}</td></tr>
                             <tr><th>ServerVersion</th><td>{{ fetch.response.ServerVersion }}</td></tr>
-                            </tbody>
+                        </tbody>
                         </table>
                     </data-fetch>
                 </div>

@@ -3,9 +3,9 @@
 ```vue
 <data-fetch v-slot="fetch" url="https://randomuser.me/api/?results=10" auto>
     <div class="flex-row flex-align-center gap10 mb15">
-        <button-refresh v-on:click="fetch.refresh" :disabled="fetch.loading"></button-refresh>
-        <button-json :value="fetch.response"></button-json>
-        <spinner v-if="fetch.loading"></spinner>
+        <button-refresh v-on:click="fetch.refresh" :disabled="fetch.loading" />
+        <button-json :value="fetch.response" />
+        <spinner v-if="fetch.loading" />
     </div>
     <vb-table :items="fetch.response?.results" :columns="[
             {label: 'picture', slot: 'picture'},
@@ -17,7 +17,7 @@
             {component: 'button-json'},
         ]">
         <template v-slot:picture="{item}">
-            <img :src="thumbnailer(item.picture.large, {w: 50})" alt="">
+            <img :src="thumbnailer(item.picture.large, {w: 50})" alt="" />
         </template>
     </vb-table>
 </data-fetch>

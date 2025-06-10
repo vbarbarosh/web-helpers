@@ -7,11 +7,11 @@
             {name: 'spinner', body: '<spinner></spinner>\n'},
         ],
     }" v-on:init="v => v.current = v.snippets[0]">
-    <button-json :value="vars"></button-json>
+    <button-json :value="vars" />
     <div class="hsplit">
         <div class="mg25">
-            <input v-model="vars.current.name" type="text">
-            <form-textarea v-model="vars.current.body"></form-textarea>
+            <input v-model="vars.current.name" type="text" />
+            <form-textarea v-model="vars.current.body" />
             <button-green v-on:click="vars.snippets.unshift(vars.current = {name: '', body: ''})">New</button-green>
         </div>
         <div class="max-w400">
@@ -22,6 +22,6 @@
             </ul>
         </div>
     </div>
-    <live-vue :value="vars.current.body"></live-vue>
+    <live-vue :value="vars.current.body" />
 </data-vars>
 ```

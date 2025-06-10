@@ -24,7 +24,7 @@
         <p>Ut semper elit sit amet eleifend pulvinar. Nulla facilisi. Sed dolor eros, sodales id efficitur vitae, vulputate non purus. Vestibulum tincidunt massa orci, ac dignissim ante fermentum et. Nam accumsan commodo mauris ut auctor. Sed dapibus nisi ac elit sollicitudin pellentesque. Vestibulum ultrices ut nulla ut faucibus. Integer mollis sapien ac aliquet tristique. Proin facilisis sodales eros vitae viverra.</p>
     </tabs-item>
     <tabs-item label="AI Image">
-        <ai-background></ai-background>
+        <ai-background />
     </tabs-item>
 </tabs>
 ```
