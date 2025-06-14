@@ -10,28 +10,7 @@
 </head>
 <body>
 
-<div id="app">
-    <data-fetch v-slot="fetch" :fn="win.snippets_list" auto>
-        <data-selection v-slot="vars" :items="fetch.response" pk="file" store="main">
-            <button-refresh @click="fetch.refresh"></button-refresh>
-            <button-json :value="fetch.response"></button-json>
-            <data-filter v-slot="filter" :items="fetch.response ?? []" prop="file">
-                <div class="flex-row gap15">
-                    <div>
-                        <input v-model="filter.pattern">
-                        <vb-table :items="filter.computed_items" :columns="[{label: 'file'},{component: 'button-json'}]" :selection="vars.selection"></vb-table>
-                    </div>
-                    <div class="flex-fluid">
-                        <div v-for="item in vars.selection">
-                            <h2>{{ item.title }}</h2>
-                            <markdown :value="item.body"></markdown>
-                        </div>
-                    </div>
-                </div>
-            </data-filter>
-        </data-selection>
-    </data-fetch>
-</div>
+<div id="app"></div>
 
 <script src="https://unpkg.com/axios@1.9.0/dist/axios.min.js"></script>
 <script src="https://unpkg.com/@vbarbarosh/dd@1.9.0/dist/dd.js"></script>
@@ -103,6 +82,28 @@
 
 <script>
     const app = Vue.createApp({
+        template: `
+            <data-fetch v-slot="fetch" :fn="win.snippets_list" auto>
+                <data-selection v-slot="vars" :items="fetch.response" pk="file" store="main">
+                    <button-refresh @click="fetch.refresh" />
+                    <button-json :value="fetch.response" />
+                    <data-filter v-slot="filter" :items="fetch.response ?? []" prop="file">
+                        <div class="flex-row gap15">
+                            <div>
+                                <input v-model="filter.pattern">
+                                <vb-table :items="filter.computed_items" :columns="[{label: 'file'},{component: 'button-json'}]" :selection="vars.selection" />
+                            </div>
+                            <div class="flex-fluid">
+                                <div v-for="item in vars.selection">
+                                    <h2>{{ item.title }}</h2>
+                                    <markdown :value="item.body" />
+                                </div>
+                            </div>
+                        </div>
+                    </data-filter>
+                </data-selection>
+            </data-fetch>
+        `,
         data: function () {
             return {};
         },
@@ -111,6 +112,7 @@
 
 <script src="../lib/js/services/docker.js"></script>
 <script src="../lib/js/services/mongo.js"></script>
+<script src="../lib/js/services/s3.js"></script>
 <script src="../lib/js/services/snippets.js"></script>
 <script src="../lib/js/utils.js"></script>
 
@@ -130,6 +132,8 @@
 <script src="../lib/components/data/data-xx-empty.js"></script>
 <script src="../lib/components/etc/reset-on-change.js"></script>
 <script src="../lib/components/forms/form-enum.js"></script>
+<script src="../lib/components/forms/form-file-drop-zone.js"></script>
+<script src="../lib/components/forms/form-files-drop-zone.js"></script>
 <script src="../lib/components/forms/form-int.js"></script>
 <script src="../lib/components/forms/form-string.js"></script>
 <script src="../lib/components/forms/form-textarea.js"></script>
@@ -143,13 +147,17 @@
 <script src="../lib/components/live/live-vue-inner.js"></script>
 <script src="../lib/components/live/live-vue.js"></script>
 <script src="../lib/components/modals/modal-blocking.js"></script>
-<script src="../lib/components/modals/modal-mongo-collections-create.js"></script>
-<script src="../lib/components/modals/modal-mongo-collections-remove.js"></script>
 <script src="../lib/components/modals/modal-error.js"></script>
 <script src="../lib/components/modals/modal-hello.js"></script>
 <script src="../lib/components/modals/modal-json.js"></script>
+<script src="../lib/components/modals/modal-mongo-collections-create.js"></script>
+<script src="../lib/components/modals/modal-mongo-collections-remove.js"></script>
+<script src="../lib/components/modals/modal-s3-buckets-create.js"></script>
 <script src="../lib/components/services/docker/docker-container-network.js"></script>
 <script src="../lib/components/services/docker/docker-container-status.js"></script>
+<script src="../lib/components/services/s3/s3-buckets-remove.js"></script>
+<script src="../lib/components/services/s3/s3-objects-remove.js"></script>
+<script src="../lib/components/services/s3/s3-objects-replace.js"></script>
 <script src="../lib/components/svg/svg-icon-ai.js"></script>
 <script src="../lib/components/svg/svg-icon-check.js"></script>
 <script src="../lib/components/svg/svg-icon-copy.js"></script>
