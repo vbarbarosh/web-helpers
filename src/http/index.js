@@ -29,6 +29,7 @@ async function main()
         ...require('./services/s3').routes,
         ...require('./services/snippets').routes,
         ...require('./services/thumbnailer').routes,
+        ...require('./services/mysql').routes,
         {req: 'ALL *', fn: page404},
     ]);
 
