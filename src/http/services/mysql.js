@@ -40,7 +40,7 @@ async function route_mysql_rows_list(req, res)
     const table = req.params.table;
     const limit = req.query.limit ?? 100;
     const offset = req.query.offset ?? 0;
-    const [rows, column_definitions] = await conn.client.query(`SELECT * FROM ${mysql2.escapeId(table)} LIMIT ?`, [limit, offset]);
+    const [rows, column_definitions] = await conn.client.query(`SELECT * FROM ${mysql2.escapeId(table)} LIMIT ? OFFSET ?`, [limit, offset]);
 
     res.send({rows, column_definitions: column_definitions.map(v => v.inspect())})
 }
