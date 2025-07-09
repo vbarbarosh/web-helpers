@@ -12,6 +12,7 @@ const routes = [
     {req: 'DELETE /api/v1/mongo/:conn/:db/:col', fn: route_mongo_collections_remove},
 
     {req: 'POST /api/v1/mongo/:conn/:db/:col/analyze', fn: route_mongo_analyze},
+    {req: 'GET /api/v1/mongo/:conn/:db/:col/analyze', fn: route_mongo_analyze},
     {req: 'DELETE /api/v1/mongo/:conn/:db/:col', fn: route_mongo_drop_collection},
 
     {req: 'GET /api/v1/mongo/:conn/:db/:col/documents.json', fn: route_mongo_documents_list},
@@ -163,7 +164,7 @@ async function route_mongo_documents_fetch(req, res)
 // POST /api/v1/mongo/:conn/:db/:col/analyze
 async function route_mongo_analyze(req, res)
 {
-    const {limit = 10000} = req.body;
+    const {limit = 10000} = req.body ?? {};
 
     const client = mongo_connections[req.params.conn];
     if (!client) {

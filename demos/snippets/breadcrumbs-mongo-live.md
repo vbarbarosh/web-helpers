@@ -1,7 +1,7 @@
 # Breadcrumbs • Mongo
 
 ```vue
-<data-vars v-slot="vars" :vars="{conn: null, db: null, col: null, doc: null}" store="snip/mongo">
+<data-vars v-slot="vars" :vars="{conn: null, db: null, col: null, doc: null, files: []}" store="snip/mongo" ignore="files">
     <reset-on-change :vars="vars" chain="conn,db,col,doc" />
     <breadcrumbs :vars>
         <breadcrumbs-item value="root" label="Connections">
@@ -34,6 +34,11 @@
                     <button v-on:click="() => win.modal_mongo_collections_remove(vars).promise().then(v => v && (vars.col = null, fetch.refresh()))">Drop Collection</button>
                 </div>
                 <form-enum v-if="fetch.response" v-model="vars.col" :options="fetch.response.items.map(v => ({label: v.name, value: v.name}))" label="Select MongoDB collection"></form-enum>
+                <vb-table v-if="fetch.response" :items="fetch.response.items">
+                    <template v-slot:actions="{item}">
+                        <button v-on:click="() => win.modal_mongo_analyze({conn: vars.conn, db: vars.db, col: item.name}).promise()">analyze</button>
+                    </template>
+                </vb-table>
             </data-fetch>
         </breadcrumbs-item>
         <breadcrumbs-item :value="vars.col" label="Documents">
@@ -43,7 +48,9 @@
                     <button-refresh @click="fetch.refresh" />
                     <button v-on:click="() => win.modal_mongo_documents_create(vars).promise().then(v => v && (vars.col = v.name))">Create Document</button>
                     <button v-on:click="() => win.modal_mongo_documents_remove(vars).promise().then(v => v && (vars.col = null, fetch.refresh()))">Drop Document</button>
+                    <button v-on:click="() => win.modal_mongo_documents_upload(vars).promise().then(v => v && (vars.files = [], fetch.refresh()))" v-bind:disabled="!vars.files.length">Upload</button>
                 </div>
+                <form-files-drop-zone v-model="vars.files" :filter="file => file.name.endsWith('.json')" limit="200" />
                 <vb-table v-if="fetch.response" :items="fetch.response.items">
                     <template v-slot:actions="{item}">
                         <button @click="vars.doc = item._id">open</button>
