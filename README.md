@@ -22,3 +22,7 @@
 | https://dummyjson.com/products?limit=10                            | 10 sample products                    |
 | https://dummyjson.com/image/400x200/008080/ffffff?text=Hello+Peter | Dummy image with custom text/color    |
 | https://dummyjson.com/icon/abc123/200                              | Dummy icon with ID `abc123`, size 200 |
+
+## Related
+
+- https://blog.jonudell.net/2025/07/18/introducing-xmlui/
