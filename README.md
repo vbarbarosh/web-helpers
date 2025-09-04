@@ -1,3 +1,5 @@
+⚠️ This project was merged into [ui-helpers](https://github.com/vbarbarosh/ui-helpers) ⚠️ 
+
 ## Resource
 
 | Resource                                                           | Description                           |
